@@ -3,8 +3,6 @@ package ske.aurora.prometheus.collector;
 import static ske.aurora.prometheus.utils.PrometheusUrlNormalizer.normalize;
 
 import java.util.List;
-import java.util.Map;
-import java.util.Optional;
 
 import io.prometheus.client.Collector;
 import io.prometheus.client.Histogram;
@@ -28,55 +26,21 @@ public class HttpMetricsCollector extends Collector {
             .create();
     }
 
-    public boolean shouldRecord(String requestUri) {
-
-        switch (config.getMode()) {
-        case INCLUDE_MAPPINGS:
-            if (!findMatchingPath(config.getMetricsPathLabelGroupings(), requestUri).isPresent()) {
-                return false;
-            }
-            break;
-        case INCLUDE:
-            if (!findMatchingPath(config.getIncludes(), requestUri).isPresent()) {
-                return false;
-            }
-            break;
-        case EXCLUDE:
-            if (findMatchingPath(config.getExcludes(), requestUri).isPresent()) {
-                return false;
-            }
-            break;
-        default:
-            break;
-        }
-        return true;
-    }
-
     public void record(String method, String requestUri, int statusCode, long start) {
+        long duration = System.nanoTime() - start;
 
-        if (!shouldRecord(requestUri)) {
+        if (!config.shouldRecord(requestUri)) {
             return;
         }
 
-        String path = findMatchingPath(config.getMetricsPathLabelGroupings(), requestUri)
-            .orElse(normalize(requestUri, isClient));
+        String path = config.groupUrl(requestUri).orElse(normalize(requestUri, isClient));
 
-        long duration = System.nanoTime() - start;
         requests.labels(
             method,
             String.valueOf(statusCode),
             HttpStatusSeries.valueOf(statusCode).name(),
             path
         ).observe(duration / Collector.NANOSECONDS_PER_SECOND);
-    }
-
-    private Optional<String> findMatchingPath(Map<String, String> mappings, String url) {
-
-        return mappings.entrySet().stream()
-            .filter(e -> url.matches(e.getValue()))
-            .map(Map.Entry::getKey)
-            .findFirst();
-
     }
 
     @Override

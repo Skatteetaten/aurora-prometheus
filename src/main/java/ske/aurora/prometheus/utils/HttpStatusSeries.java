@@ -25,11 +25,4 @@ public enum HttpStatusSeries {
             .orElseThrow(() -> new IllegalArgumentException("No matching constant for [" + status + "]"));
     }
 
-    public static HttpStatusSeries valueOf(HttpStatusSeries status) {
-        return valueOf(status.value);
-    }
-
-    public int value() {
-        return this.value;
-    }
 }

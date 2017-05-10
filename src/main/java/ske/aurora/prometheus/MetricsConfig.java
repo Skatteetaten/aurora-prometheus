@@ -10,15 +10,14 @@ import io.prometheus.client.CollectorRegistry;
 import io.prometheus.client.hotspot.MemoryPoolsExports;
 import io.prometheus.client.hotspot.StandardExports;
 import io.prometheus.client.hotspot.ThreadExports;
-import io.prometheus.client.logback.InstrumentedAppender;
 import ske.aurora.prometheus.collector.HttpMetricsCollector;
 import ske.aurora.prometheus.collector.JvmGcMetrics;
+import ske.aurora.prometheus.collector.LogbackMetricsAppender;
 import ske.aurora.prometheus.collector.Operation;
 
 public final class MetricsConfig {
 
     private static final org.slf4j.Logger logger = LoggerFactory.getLogger(MetricsConfig.class);
-    private static boolean initialized = false;
 
     private MetricsConfig() {
 
@@ -26,10 +25,8 @@ public final class MetricsConfig {
 
     public static CollectorRegistry init(Set<HttpMetricsCollector> httpCollectors) {
         CollectorRegistry registry = CollectorRegistry.defaultRegistry;
+        registry.clear();
 
-        if (initialized) {
-            return registry;
-        }
         httpCollectors.forEach(it -> it.register(registry));
 
         //do not register the default metrics since we want full control here.
@@ -42,15 +39,14 @@ public final class MetricsConfig {
 
         // logback metrics
         LoggerContext lc = (LoggerContext) LoggerFactory.getILoggerFactory();
-        //this adds itself to the defaultRegsitry and since it is in a dependcy I have no way ot changing it.
-        InstrumentedAppender appender = new InstrumentedAppender();
+        //cannot use instrumented appender here since it is not possible to send in the registry
+        LogbackMetricsAppender appender = new LogbackMetricsAppender(registry);
         appender.setContext(lc);
         appender.start();
         Logger root = (Logger) LoggerFactory.getLogger(Logger.ROOT_LOGGER_NAME);
         root.addAppender(appender);
 
         logger.debug("Registered standard, memory, thread, gc, httpcollectors and logback metrics");
-        initialized = true;
         return registry;
     }
 }

@@ -3,6 +3,7 @@ package ske.aurora.prometheus;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+import ske.aurora.prometheus.collector.HttpMetricsCollector;
 import ske.aurora.prometheus.utils.MetricsMode;
 
 public class HttpMetricsCollectorConfig {
@@ -11,6 +12,9 @@ public class HttpMetricsCollectorConfig {
     private LinkedHashMap<String, String> metricsPathLabelGroupings = new LinkedHashMap<>();
     private LinkedHashMap<String, String> includes = new LinkedHashMap<>();
     private LinkedHashMap<String, String> excludes = new LinkedHashMap<>();
+
+    public HttpMetricsCollectorConfig() {
+    }
 
     public HttpMetricsCollectorConfig(MetricsMode mode,
         LinkedHashMap<String, String> metricsPathLabelGroupings,

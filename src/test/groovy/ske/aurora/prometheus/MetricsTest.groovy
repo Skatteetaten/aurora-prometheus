@@ -2,11 +2,16 @@ package ske.aurora.prometheus
 
 import static ske.aurora.prometheus.collector.Operation.OperationType.DATABASE_WRITE
 import static ske.aurora.prometheus.collector.Operation.withMetrics
+import static ske.aurora.prometheus.collector.Status.StatusValue.CRITICAL
+import static ske.aurora.prometheus.collector.Status.StatusValue.OK
+import static ske.aurora.prometheus.collector.Status.StatusValue.UNKNOWN
+import static ske.aurora.prometheus.collector.Status.StatusValue.WARNING
 import static ske.aurora.prometheus.collector.Status.status
 
 import ske.aurora.prometheus.collector.HttpMetricsCollector
-import ske.aurora.prometheus.collector.Status
+import ske.aurora.prometheus.collector.Size
 import spock.lang.Specification
+import spock.lang.Unroll
 
 class MetricsTest extends Specification {
 
@@ -17,27 +22,57 @@ class MetricsTest extends Specification {
     expect:
       def samples = config.metricFamilySamples().toSet()
 
-      samples.size() == 23
+      !samples.isEmpty()
+
+      samples.collect { it.name }.containsAll(
+          ["operations", "sizes", "statuses", "jvm_gc_hist", "logback_appender_total"])
 
   }
 
-  def "should record status metrics "() {
+  @Unroll
+  def "should record staus #value metrics "() {
 
-    when:
-      status("test", Status.StatusValue.OK)
+    expect:
+      status(name, value)
 
-    then:
       String[] names = ["name"]
-      String[] values = ["test"]
+      String[] values = [name]
       def result = config.getSampleValue("statuses", names, values)
-      result == 0
+      result == value.getValue().toInteger()
+
+    where:
+      name   | value
+      "test" | OK
+      "test" | WARNING
+      "test" | CRITICAL
+      "test" | UNKNOWN
+
+  }
+
+  @Unroll
+  def "should record size #value metrics "() {
+
+    expect:
+      Size.size(name, type, value)
+
+      String[] names = ["name", "type"]
+      String[] values = [name, type]
+      def result = config.getSampleValue("sizes", names, values)
+      result == value
+
+    where:
+      name   | type         | value
+      "test" | "feed"       | 1
+      "test" | "feed"       | 2
+      "test" | "feed"       | 3
+      "bar"  | "threadpool" | 1
 
   }
 
   def "should record database write operations metric"() {
 
     when:
-      withMetrics("test", DATABASE_WRITE, { "foo" })
+      withMetrics("test", DATABASE_WRITE, { "simulating operation" })
 
     then:
       String[] names = ["result", "type", "name"]
@@ -46,10 +81,11 @@ class MetricsTest extends Specification {
       result == 1.0
 
   }
+
   def "should record operation metric"() {
 
     when:
-      withMetrics("test", { "foo" })
+      withMetrics("test", { "simulating operation" })
 
     then:
       String[] names = ["result", "type", "name"]

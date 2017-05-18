@@ -1,6 +1,7 @@
 package ske.aurora.prometheus;
 
-import java.util.Set;
+import java.util.Arrays;
+import java.util.Collection;
 
 import org.slf4j.LoggerFactory;
 
@@ -25,7 +26,11 @@ public final class MetricsConfig {
 
     }
 
-    public static CollectorRegistry init(Set<HttpMetricsCollector> httpCollectors) {
+    public static CollectorRegistry init(HttpMetricsCollector... httpCollectors) {
+        return init(Arrays.asList(httpCollectors));
+    }
+
+    public static CollectorRegistry init(Collection<HttpMetricsCollector> httpCollectors) {
         CollectorRegistry registry = CollectorRegistry.defaultRegistry;
         registry.clear();
 

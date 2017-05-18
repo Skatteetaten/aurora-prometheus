@@ -3,6 +3,7 @@ package ske.aurora.prometheus.utils;
 import java.util.Arrays;
 
 public enum HttpStatusSeries {
+    EXCEPTION(0),
     INFORMATIONAL(1),
     SUCCESSFUL(2),
     REDIRECTION(3),

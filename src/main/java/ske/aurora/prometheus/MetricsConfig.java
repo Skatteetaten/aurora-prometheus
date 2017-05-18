@@ -14,6 +14,8 @@ import ske.aurora.prometheus.collector.HttpMetricsCollector;
 import ske.aurora.prometheus.collector.JvmGcMetrics;
 import ske.aurora.prometheus.collector.LogbackMetricsAppender;
 import ske.aurora.prometheus.collector.Operation;
+import ske.aurora.prometheus.collector.Size;
+import ske.aurora.prometheus.collector.Status;
 
 public final class MetricsConfig {
 
@@ -36,6 +38,8 @@ public final class MetricsConfig {
 
         new JvmGcMetrics().register(registry);
         Operation.getInstance().register(registry);
+        Size.getInstance().register(registry);
+        Status.getInstance().register(registry);
 
         // logback metrics
         LoggerContext lc = (LoggerContext) LoggerFactory.getILoggerFactory();

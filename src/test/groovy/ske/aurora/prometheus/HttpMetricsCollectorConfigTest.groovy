@@ -5,6 +5,8 @@ import static ske.aurora.prometheus.HttpMetricsCollectorConfig.MetricsMode.EXCLU
 import static ske.aurora.prometheus.HttpMetricsCollectorConfig.MetricsMode.INCLUDE
 import static ske.aurora.prometheus.HttpMetricsCollectorConfig.MetricsMode.INCLUDE_MAPPINGS
 
+import java.util.regex.PatternSyntaxException
+
 import spock.lang.Specification
 import spock.lang.Unroll
 
@@ -32,6 +34,14 @@ class HttpMetricsCollectorConfigTest extends Specification {
       "http://bar.com/api" | ALL              | true
       "http://baz.com/api" | ALL              | true
 
+  }
+
+  def "should not be able to create config with invalid re"() {
+    when:
+      new HttpMetricsCollectorConfig(ALL, ["foo": "*foo.com.*"], [:], [:])
+
+    then:
+      thrown(PatternSyntaxException)
   }
 
   def "should map url"() {

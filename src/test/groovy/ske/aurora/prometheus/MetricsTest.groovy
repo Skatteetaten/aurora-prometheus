@@ -1,8 +1,11 @@
 package ske.aurora.prometheus
 
+import static ske.aurora.prometheus.collector.Operation.OperationType.DATABASE_WRITE
 import static ske.aurora.prometheus.collector.Operation.withMetrics
+import static ske.aurora.prometheus.collector.Status.status
 
 import ske.aurora.prometheus.collector.HttpMetricsCollector
+import ske.aurora.prometheus.collector.Status
 import spock.lang.Specification
 
 class MetricsTest extends Specification {
@@ -14,18 +17,43 @@ class MetricsTest extends Specification {
     expect:
       def samples = config.metricFamilySamples().toSet()
 
-      samples.size() == 21
+      samples.size() == 23
 
   }
 
+  def "should record status metrics "() {
+
+    when:
+      status("test", Status.StatusValue.OK)
+
+    then:
+      String[] names = ["name"]
+      String[] values = ["test"]
+      def result = config.getSampleValue("statuses", names, values)
+      result == 0
+
+  }
+
+  def "should record database write operations metric"() {
+
+    when:
+      withMetrics("test", DATABASE_WRITE, { "foo" })
+
+    then:
+      String[] names = ["result", "type", "name"]
+      String[] values = ["success", "DATABASE_WRITE", "test"]
+      def result = config.getSampleValue("operations_count", names, values)
+      result == 1.0
+
+  }
   def "should record operation metric"() {
 
     when:
       withMetrics("test", { "foo" })
 
     then:
-      String[] names = ["type", "name"]
-      String[] values = ["success", "test"]
+      String[] names = ["result", "type", "name"]
+      String[] values = ["success", "OTHER", "test"]
       def result = config.getSampleValue("operations_count", names, values)
       result == 1.0
 
@@ -42,8 +70,8 @@ class MetricsTest extends Specification {
       }
 
     then:
-      String[] names = ["type", "name"]
-      String[] values = ["RuntimeException", "test"]
+      String[] names = ["result", "type", "name"]
+      String[] values = ["RuntimeException", "OTHER", "test"]
       def result = config.getSampleValue("operations_count", names, values)
       result == 1.0
 

@@ -1,6 +1,5 @@
 package ske.aurora.prometheus
 
-import static ske.aurora.prometheus.collector.Operation.OperationType.DATABASE_WRITE
 import static ske.aurora.prometheus.collector.Operation.withMetrics
 import static ske.aurora.prometheus.collector.Status.StatusValue.CRITICAL
 import static ske.aurora.prometheus.collector.Status.StatusValue.OK
@@ -74,7 +73,7 @@ class MetricsTest extends Specification {
   def "should record database write operations metric"() {
 
     when:
-      withMetrics("test", DATABASE_WRITE, { "simulating operation" })
+      withMetrics("test", "DATABASE_WRITE", { "simulating operation" })
 
     then:
       String[] names = ["result", "type", "name"]
@@ -91,7 +90,7 @@ class MetricsTest extends Specification {
 
     then:
       String[] names = ["result", "type", "name"]
-      String[] values = ["success", "OTHER", "test"]
+      String[] values = ["success", "operation", "test"]
       def result = config.getSampleValue("operations_count", names, values)
       result == 1.0
 
@@ -109,7 +108,7 @@ class MetricsTest extends Specification {
 
     then:
       String[] names = ["result", "type", "name"]
-      String[] values = ["RuntimeException", "OTHER", "test"]
+      String[] values = ["RuntimeException", "operation", "test"]
       def result = config.getSampleValue("operations_count", names, values)
       result == 1.0
 

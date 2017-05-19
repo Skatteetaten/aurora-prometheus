@@ -29,10 +29,10 @@ public final class Operation extends Collector {
     }
 
     public static <T> T withMetrics(String name, Supplier<T> s) {
-        return withMetrics(name, OperationType.OTHER, s);
+        return withMetrics(name, "operation", s);
     }
 
-    public static <T> T withMetrics(String name, OperationType type, Supplier<T> s) {
+    public static <T> T withMetrics(String name, String type, Supplier<T> s) {
 
         SimpleTimer requestTimer = new SimpleTimer();
         String result = "success";
@@ -42,7 +42,7 @@ public final class Operation extends Collector {
             result = e.getClass().getSimpleName();
             throw e;
         } finally {
-            instance.executions.labels(result, type.name(), name)
+            instance.executions.labels(result, type, name)
                 .observe(requestTimer.elapsedSeconds());
         }
     }
@@ -60,14 +60,6 @@ public final class Operation extends Collector {
     @Override
     public List<MetricFamilySamples> collect() {
         return executions.collect();
-    }
-
-    public enum OperationType {
-        IO,
-        DATABASE_READ,
-        DATABASE_WRITE,
-        ALGORITHM,
-        OTHER
     }
 
 }

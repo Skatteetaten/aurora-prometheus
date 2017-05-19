@@ -26,13 +26,11 @@ public final class MetricsConfig {
 
     }
 
-    public static CollectorRegistry init(HttpMetricsCollector... httpCollectors) {
-        return init(Arrays.asList(httpCollectors));
+    public static CollectorRegistry init(CollectorRegistry registry, HttpMetricsCollector... httpCollectors) {
+        return init(registry, Arrays.asList(httpCollectors));
     }
 
-    public static CollectorRegistry init(Collection<HttpMetricsCollector> httpCollectors) {
-        CollectorRegistry registry = CollectorRegistry.defaultRegistry;
-        registry.clear();
+    public static CollectorRegistry init(CollectorRegistry registry, Collection<HttpMetricsCollector> httpCollectors) {
 
         httpCollectors.forEach(it -> it.register(registry));
 

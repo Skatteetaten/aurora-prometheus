@@ -8,6 +8,7 @@ import static ske.aurora.prometheus.collector.Status.StatusValue.UNKNOWN
 import static ske.aurora.prometheus.collector.Status.StatusValue.WARNING
 import static ske.aurora.prometheus.collector.Status.status
 
+import io.prometheus.client.CollectorRegistry
 import ske.aurora.prometheus.collector.HttpMetricsCollector
 import ske.aurora.prometheus.collector.Size
 import spock.lang.Specification
@@ -15,7 +16,8 @@ import spock.lang.Unroll
 
 class MetricsTest extends Specification {
 
-  def config = MetricsConfig.init([] as Set)
+  def registry = new CollectorRegistry(true)
+  def config = MetricsConfig.init(registry, [] as Set)
 
   def "should have metrics registered"() {
 
@@ -128,7 +130,7 @@ class MetricsTest extends Specification {
     given:
 
       def httpClientCollector = new HttpMetricsCollector(true, new HttpMetricsCollectorConfig())
-      def config = MetricsConfig.init([httpClientCollector] as Set)
+      def config = MetricsConfig.init(new CollectorRegistry(true), [httpClientCollector] as Set)
 
 
     when:
@@ -148,7 +150,7 @@ class MetricsTest extends Specification {
     given:
 
       def httpSeverCollector = new HttpMetricsCollector(false, new HttpMetricsCollectorConfig())
-      def config = MetricsConfig.init([httpSeverCollector] as Set)
+      def config = MetricsConfig.init(new CollectorRegistry(true), [httpSeverCollector] as Set)
 
     when:
       def start = System.nanoTime()

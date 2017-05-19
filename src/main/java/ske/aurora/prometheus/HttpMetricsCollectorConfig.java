@@ -22,16 +22,18 @@ public class HttpMetricsCollectorConfig {
         LinkedHashMap<String, String> excludes) {
         this.mode = mode;
 
-        for (Map.Entry<String, String> entry : metricsPathLabelGroupings.entrySet()) {
-            this.metricsPathLabelGroupings.put(entry.getKey(), Pattern.compile(entry.getValue()));
-        }
-        for (Map.Entry<String, String> entry : includes.entrySet()) {
-            this.includes.put(entry.getKey(), Pattern.compile(entry.getValue()));
-        }
+        this.metricsPathLabelGroupings = compilePatterns(metricsPathLabelGroupings);
+        this.includes = compilePatterns(includes);
+        this.excludes = compilePatterns(excludes);
+    }
 
-        for (Map.Entry<String, String> entry : excludes.entrySet()) {
-            this.excludes.put(entry.getKey(), Pattern.compile(entry.getValue()));
+    private LinkedHashMap<String, Pattern> compilePatterns(LinkedHashMap<String, String> inputMap) {
+        LinkedHashMap<String, Pattern> patternMap = new LinkedHashMap<>();
+
+        for (Map.Entry<String, String> entry : inputMap.entrySet()) {
+            patternMap.put(entry.getKey(), Pattern.compile(entry.getValue()));
         }
+        return patternMap;
     }
 
     public Map<String, Pattern> getMetricsPathLabelGroupings() {

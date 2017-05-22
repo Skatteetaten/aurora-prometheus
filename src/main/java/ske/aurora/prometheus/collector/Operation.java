@@ -22,23 +22,27 @@ public final class Operation extends Collector {
         executions = Histogram.build()
             .name("operations")
             .help("Manual operation that we want statistics on")
-            .labelNames("type", "name")
+            .labelNames("result", "type", "name")
             .create();
         logger.debug("operations histogram registered");
 
     }
 
     public static <T> T withMetrics(String name, Supplier<T> s) {
+        return withMetrics(name, "operation", s);
+    }
+
+    public static <T> T withMetrics(String name, String type, Supplier<T> s) {
 
         SimpleTimer requestTimer = new SimpleTimer();
-        String type = "success";
+        String result = "success";
         try {
             return s.get();
         } catch (Exception e) {
-            type = e.getClass().getSimpleName();
+            result = e.getClass().getSimpleName();
             throw e;
         } finally {
-            instance.executions.labels(type, name)
+            instance.executions.labels(result, type, name)
                 .observe(requestTimer.elapsedSeconds());
         }
     }
@@ -47,7 +51,7 @@ public final class Operation extends Collector {
 
         if (instance == null) {
 
-            logger.debug("Create new execute metrics");
+            logger.debug("Create new operations metrics");
             instance = new Operation();
         }
         return instance;

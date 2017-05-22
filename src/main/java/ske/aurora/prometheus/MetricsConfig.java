@@ -1,6 +1,7 @@
 package ske.aurora.prometheus;
 
-import java.util.Set;
+import java.util.Arrays;
+import java.util.Collection;
 
 import org.slf4j.LoggerFactory;
 
@@ -14,6 +15,8 @@ import ske.aurora.prometheus.collector.HttpMetricsCollector;
 import ske.aurora.prometheus.collector.JvmGcMetrics;
 import ske.aurora.prometheus.collector.LogbackMetricsAppender;
 import ske.aurora.prometheus.collector.Operation;
+import ske.aurora.prometheus.collector.Size;
+import ske.aurora.prometheus.collector.Status;
 
 public final class MetricsConfig {
 
@@ -23,9 +26,11 @@ public final class MetricsConfig {
 
     }
 
-    public static CollectorRegistry init(Set<HttpMetricsCollector> httpCollectors) {
-        CollectorRegistry registry = CollectorRegistry.defaultRegistry;
-        registry.clear();
+    public static CollectorRegistry init(CollectorRegistry registry, HttpMetricsCollector... httpCollectors) {
+        return init(registry, Arrays.asList(httpCollectors));
+    }
+
+    public static CollectorRegistry init(CollectorRegistry registry, Collection<HttpMetricsCollector> httpCollectors) {
 
         httpCollectors.forEach(it -> it.register(registry));
 
@@ -36,6 +41,8 @@ public final class MetricsConfig {
 
         new JvmGcMetrics().register(registry);
         Operation.getInstance().register(registry);
+        Size.getInstance().register(registry);
+        Status.getInstance().register(registry);
 
         // logback metrics
         LoggerContext lc = (LoggerContext) LoggerFactory.getILoggerFactory();

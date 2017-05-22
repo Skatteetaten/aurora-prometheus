@@ -3,13 +3,14 @@ package ske.aurora.prometheus;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Optional;
+import java.util.regex.Pattern;
 
 public class HttpMetricsCollectorConfig {
 
     private MetricsMode mode = MetricsMode.ALL;
-    private LinkedHashMap<String, String> metricsPathLabelGroupings = new LinkedHashMap<>();
-    private LinkedHashMap<String, String> includes = new LinkedHashMap<>();
-    private LinkedHashMap<String, String> excludes = new LinkedHashMap<>();
+    private LinkedHashMap<String, Pattern> metricsPathLabelGroupings = new LinkedHashMap<>();
+    private LinkedHashMap<String, Pattern> includes = new LinkedHashMap<>();
+    private LinkedHashMap<String, Pattern> excludes = new LinkedHashMap<>();
 
     public HttpMetricsCollectorConfig() {
         //For spring
@@ -20,12 +21,22 @@ public class HttpMetricsCollectorConfig {
         LinkedHashMap<String, String> includes,
         LinkedHashMap<String, String> excludes) {
         this.mode = mode;
-        this.metricsPathLabelGroupings = metricsPathLabelGroupings;
-        this.includes = includes;
-        this.excludes = excludes;
+
+        this.metricsPathLabelGroupings = compilePatterns(metricsPathLabelGroupings);
+        this.includes = compilePatterns(includes);
+        this.excludes = compilePatterns(excludes);
     }
 
-    public Map<String, String> getMetricsPathLabelGroupings() {
+    private LinkedHashMap<String, Pattern> compilePatterns(LinkedHashMap<String, String> inputMap) {
+        LinkedHashMap<String, Pattern> patternMap = new LinkedHashMap<>();
+
+        for (Map.Entry<String, String> entry : inputMap.entrySet()) {
+            patternMap.put(entry.getKey(), Pattern.compile(entry.getValue()));
+        }
+        return patternMap;
+    }
+
+    public Map<String, Pattern> getMetricsPathLabelGroupings() {
         return metricsPathLabelGroupings;
     }
 
@@ -37,11 +48,11 @@ public class HttpMetricsCollectorConfig {
         this.mode = mode;
     }
 
-    public Map<String, String> getIncludes() {
+    public Map<String, Pattern> getIncludes() {
         return includes;
     }
 
-    public Map<String, String> getExcludes() {
+    public Map<String, Pattern> getExcludes() {
         return excludes;
     }
 
@@ -73,10 +84,10 @@ public class HttpMetricsCollectorConfig {
         return findMatchingPath(metricsPathLabelGroupings, requestUri);
     }
 
-    private Optional<String> findMatchingPath(Map<String, String> mappings, String url) {
+    private Optional<String> findMatchingPath(Map<String, Pattern> mappings, String url) {
 
         return mappings.entrySet().stream()
-            .filter(e -> url.matches(e.getValue()))
+            .filter(e -> e.getValue().matcher(url).find())
             .map(Map.Entry::getKey)
             .findFirst();
 

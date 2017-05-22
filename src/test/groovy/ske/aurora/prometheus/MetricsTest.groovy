@@ -1,31 +1,104 @@
 package ske.aurora.prometheus
 
 import static ske.aurora.prometheus.collector.Operation.withMetrics
+import static ske.aurora.prometheus.collector.Status.StatusValue.CRITICAL
+import static ske.aurora.prometheus.collector.Status.StatusValue.OK
+import static ske.aurora.prometheus.collector.Status.StatusValue.UNKNOWN
+import static ske.aurora.prometheus.collector.Status.StatusValue.WARNING
+import static ske.aurora.prometheus.collector.Status.status
 
+import io.prometheus.client.CollectorRegistry
 import ske.aurora.prometheus.collector.HttpMetricsCollector
+import ske.aurora.prometheus.collector.Size
 import spock.lang.Specification
+import spock.lang.Unroll
 
 class MetricsTest extends Specification {
 
-  def config = MetricsConfig.init([] as Set)
+  def registry = new CollectorRegistry(true)
+  def config = MetricsConfig.init(registry, [] as Set)
 
   def "should have metrics registered"() {
 
     expect:
       def samples = config.metricFamilySamples().toSet()
 
-      samples.size() == 21
+      !samples.isEmpty()
+
+      samples.collect { it.name }.containsAll(
+          ["operations", "sizes", "statuses", "jvm_gc_hist", "logback_appender_total"])
+
+  }
+
+  def "record ok staus"() {
+    when:
+      status("myStatus", OK)
+    then:
+      statusFor("myStatus") == 0
+  }
+
+  def "record warning staus"() {
+    when:
+      status("myStatus", WARNING)
+    then:
+      statusFor("myStatus") == 1
+  }
+
+  def "record critical staus"() {
+    when:
+      status("myStatus", CRITICAL)
+    then:
+      statusFor("myStatus") == 2
+  }
+
+  def "record unknown staus"() {
+    when:
+      status("myStatus", UNKNOWN)
+    then:
+      statusFor("myStatus") == 3
+  }
+
+  @Unroll
+  def "should record size #value metrics "() {
+
+    expect:
+      Size.size(name, type, value)
+
+      String[] names = ["name", "type"]
+      String[] values = [name, type]
+      def result = config.getSampleValue("sizes", names, values)
+      result == value
+
+    where:
+      name   | type         | value
+      "test" | "feed"       | 1
+      "test" | "feed"       | 2
+      "test" | "feed"       | 3
+      "bar"  | "threadpool" | 1
+
+  }
+
+  def "should record database write operations metric"() {
+
+    when:
+      withMetrics("test", "DATABASE_WRITE", { "simulating operation" })
+
+    then:
+      String[] names = ["result", "type", "name"]
+      String[] values = ["success", "DATABASE_WRITE", "test"]
+      def result = config.getSampleValue("operations_count", names, values)
+      result == 1.0
 
   }
 
   def "should record operation metric"() {
 
     when:
-      withMetrics("test", { "foo" })
+      withMetrics("test", { "simulating operation" })
 
     then:
-      String[] names = ["type", "name"]
-      String[] values = ["success", "test"]
+      String[] names = ["result", "type", "name"]
+      String[] values = ["success", "operation", "test"]
       def result = config.getSampleValue("operations_count", names, values)
       result == 1.0
 
@@ -42,8 +115,8 @@ class MetricsTest extends Specification {
       }
 
     then:
-      String[] names = ["type", "name"]
-      String[] values = ["RuntimeException", "test"]
+      String[] names = ["result", "type", "name"]
+      String[] values = ["RuntimeException", "operation", "test"]
       def result = config.getSampleValue("operations_count", names, values)
       result == 1.0
 
@@ -64,7 +137,7 @@ class MetricsTest extends Specification {
     given:
 
       def httpClientCollector = new HttpMetricsCollector(true, new HttpMetricsCollectorConfig())
-      def config = MetricsConfig.init([httpClientCollector] as Set)
+      def config = MetricsConfig.init(new CollectorRegistry(true), [httpClientCollector] as Set)
 
 
     when:
@@ -84,7 +157,7 @@ class MetricsTest extends Specification {
     given:
 
       def httpSeverCollector = new HttpMetricsCollector(false, new HttpMetricsCollectorConfig())
-      def config = MetricsConfig.init([httpSeverCollector] as Set)
+      def config = MetricsConfig.init(new CollectorRegistry(true), [httpSeverCollector] as Set)
 
     when:
       def start = System.nanoTime()
@@ -101,4 +174,8 @@ class MetricsTest extends Specification {
 
   }
 
+  def statusFor(name) {
+    config.getSampleValue("statuses", ["name"] as String[], [name] as String[])
+  }
 }
+

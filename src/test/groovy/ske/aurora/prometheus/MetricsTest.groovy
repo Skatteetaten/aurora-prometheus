@@ -30,24 +30,32 @@ class MetricsTest extends Specification {
 
   }
 
-  @Unroll
-  def "should record staus #value metrics "() {
+  def "record ok staus"() {
+    when:
+      status("myStatus", OK)
+    then:
+      statusFor("myStatus") == 0
+  }
 
-    expect:
-      status(name, value)
+  def "record warning staus"() {
+    when:
+      status("myStatus", WARNING)
+    then:
+      statusFor("myStatus") == 1
+  }
 
-      String[] names = ["name"]
-      String[] values = [name]
-      def result = config.getSampleValue("statuses", names, values)
-      result == value.getValue().toInteger()
+  def "record critical staus"() {
+    when:
+      status("myStatus", CRITICAL)
+    then:
+      statusFor("myStatus") == 2
+  }
 
-    where:
-      name   | value
-      "test" | OK
-      "test" | WARNING
-      "test" | CRITICAL
-      "test" | UNKNOWN
-
+  def "record unknown staus"() {
+    when:
+      status("myStatus", UNKNOWN)
+    then:
+      statusFor("myStatus") == 3
   }
 
   @Unroll
@@ -166,4 +174,8 @@ class MetricsTest extends Specification {
 
   }
 
+  def statusFor(name) {
+    config.getSampleValue("statuses", ["name"] as String[], [name] as String[])
+  }
 }
+

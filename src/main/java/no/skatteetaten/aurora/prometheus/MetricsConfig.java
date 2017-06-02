@@ -1,4 +1,4 @@
-package ske.aurora.prometheus;
+package no.skatteetaten.aurora.prometheus;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -11,12 +11,12 @@ import io.prometheus.client.CollectorRegistry;
 import io.prometheus.client.hotspot.MemoryPoolsExports;
 import io.prometheus.client.hotspot.StandardExports;
 import io.prometheus.client.hotspot.ThreadExports;
-import ske.aurora.prometheus.collector.HttpMetricsCollector;
-import ske.aurora.prometheus.collector.JvmGcMetrics;
-import ske.aurora.prometheus.collector.LogbackMetricsAppender;
-import ske.aurora.prometheus.collector.Operation;
-import ske.aurora.prometheus.collector.Size;
-import ske.aurora.prometheus.collector.Status;
+import no.skatteetaten.aurora.prometheus.collector.HttpMetricsCollector;
+import no.skatteetaten.aurora.prometheus.collector.JvmGcMetrics;
+import no.skatteetaten.aurora.prometheus.collector.LogbackMetricsAppender;
+import no.skatteetaten.aurora.prometheus.collector.Operation;
+import no.skatteetaten.aurora.prometheus.collector.Size;
+import no.skatteetaten.aurora.prometheus.collector.Status;
 
 public final class MetricsConfig {
 

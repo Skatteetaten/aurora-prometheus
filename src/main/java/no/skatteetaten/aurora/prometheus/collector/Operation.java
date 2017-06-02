@@ -1,4 +1,4 @@
-package ske.aurora.prometheus.collector;
+package no.skatteetaten.aurora.prometheus.collector;
 
 import java.util.List;
 import java.util.function.Supplier;

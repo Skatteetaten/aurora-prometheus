@@ -1,15 +1,15 @@
-package ske.aurora.prometheus
+package no.skatteetaten.aurora.prometheus
 
-import static ske.aurora.prometheus.collector.Operation.withMetrics
-import static ske.aurora.prometheus.collector.Status.StatusValue.CRITICAL
-import static ske.aurora.prometheus.collector.Status.StatusValue.OK
-import static ske.aurora.prometheus.collector.Status.StatusValue.UNKNOWN
-import static ske.aurora.prometheus.collector.Status.StatusValue.WARNING
-import static ske.aurora.prometheus.collector.Status.status
+import static no.skatteetaten.aurora.prometheus.collector.Operation.withMetrics
+import static no.skatteetaten.aurora.prometheus.collector.Status.StatusValue.CRITICAL
+import static no.skatteetaten.aurora.prometheus.collector.Status.StatusValue.OK
+import static no.skatteetaten.aurora.prometheus.collector.Status.StatusValue.UNKNOWN
+import static no.skatteetaten.aurora.prometheus.collector.Status.StatusValue.WARNING
+import static no.skatteetaten.aurora.prometheus.collector.Status.status
 
 import io.prometheus.client.CollectorRegistry
-import ske.aurora.prometheus.collector.HttpMetricsCollector
-import ske.aurora.prometheus.collector.Size
+import no.skatteetaten.aurora.prometheus.collector.HttpMetricsCollector
+import no.skatteetaten.aurora.prometheus.collector.Size
 import spock.lang.Specification
 import spock.lang.Unroll
 

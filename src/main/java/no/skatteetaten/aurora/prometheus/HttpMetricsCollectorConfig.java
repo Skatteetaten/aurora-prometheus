@@ -1,4 +1,4 @@
-package ske.aurora.prometheus;
+package no.skatteetaten.aurora.prometheus;
 
 import java.util.LinkedHashMap;
 import java.util.Map;

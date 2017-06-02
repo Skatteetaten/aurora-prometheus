@@ -1,4 +1,4 @@
-package ske.aurora.prometheus.collector;
+package no.skatteetaten.aurora.prometheus.collector;
 
 import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.spi.ILoggingEvent;

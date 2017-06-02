@@ -1,13 +1,13 @@
-package ske.aurora.prometheus.collector;
+package no.skatteetaten.aurora.prometheus.collector;
 
-import static ske.aurora.prometheus.utils.PrometheusUrlNormalizer.normalize;
+import static no.skatteetaten.aurora.prometheus.utils.PrometheusUrlNormalizer.normalize;
 
 import java.util.List;
 
 import io.prometheus.client.Collector;
 import io.prometheus.client.Histogram;
-import ske.aurora.prometheus.HttpMetricsCollectorConfig;
-import ske.aurora.prometheus.utils.HttpStatusSeries;
+import no.skatteetaten.aurora.prometheus.HttpMetricsCollectorConfig;
+import no.skatteetaten.aurora.prometheus.utils.HttpStatusSeries;
 
 public class HttpMetricsCollector extends Collector {
 

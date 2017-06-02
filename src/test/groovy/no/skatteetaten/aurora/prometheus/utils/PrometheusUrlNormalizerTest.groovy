@@ -1,6 +1,6 @@
-package ske.aurora.prometheus.utils
+package no.skatteetaten.aurora.prometheus.utils
 
-import static ske.aurora.prometheus.utils.PrometheusUrlNormalizer.normalize
+import static PrometheusUrlNormalizer.normalize
 
 import spock.lang.Specification
 import spock.lang.Unroll

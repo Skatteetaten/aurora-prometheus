@@ -1,9 +1,9 @@
-package ske.aurora.prometheus
+package no.skatteetaten.aurora.prometheus
 
-import static ske.aurora.prometheus.HttpMetricsCollectorConfig.MetricsMode.ALL
-import static ske.aurora.prometheus.HttpMetricsCollectorConfig.MetricsMode.EXCLUDE
-import static ske.aurora.prometheus.HttpMetricsCollectorConfig.MetricsMode.INCLUDE
-import static ske.aurora.prometheus.HttpMetricsCollectorConfig.MetricsMode.INCLUDE_MAPPINGS
+import static no.skatteetaten.aurora.prometheus.HttpMetricsCollectorConfig.MetricsMode.ALL
+import static no.skatteetaten.aurora.prometheus.HttpMetricsCollectorConfig.MetricsMode.EXCLUDE
+import static no.skatteetaten.aurora.prometheus.HttpMetricsCollectorConfig.MetricsMode.INCLUDE
+import static no.skatteetaten.aurora.prometheus.HttpMetricsCollectorConfig.MetricsMode.INCLUDE_MAPPINGS
 
 import java.util.regex.PatternSyntaxException
 

@@ -1,4 +1,4 @@
-package ske.aurora.prometheus.utils;
+package no.skatteetaten.aurora.prometheus.utils;
 
 import java.util.Arrays;
 

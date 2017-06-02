@@ -7,7 +7,8 @@ fileLoader.withGit('https://git.aurora.skead.no/scm/ao/aurora-pipeline-scripts.g
 def overrides = [
     piTests: false,
     library: true,
-    deployProperties: "-P sign,build-extras"
+    deployProperties: "-P sign,build-extras",
+    credentialsId: "github_bjartek"
 ]
 
 jenkinsfile.run(version, overrides)

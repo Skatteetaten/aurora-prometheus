@@ -9,7 +9,7 @@ def overrides = [
     skipOpenshiftBuild: true,
     deployProperties: "-P sign,build-extras",
     credentialsId: "github_bjartek",
-    mavenSettignsFile: "github-maven-settings"
+    mavenSettingsFile: "github-maven-settings"
 ]
 
 jenkinsfile.run(version, overrides)

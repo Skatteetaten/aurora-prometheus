@@ -8,7 +8,6 @@ fileLoader.withGit('https://git.aurora.skead.no/scm/ao/aurora-pipeline-scripts.g
 
 def overrides = [
     piTests: false,
-    skipOpenShiftBuild: true,
     credentialsId: "github_bjartek",
     deployTo: 'maven-central'
 ]

@@ -1,5 +1,7 @@
+#!/usr/bin/env groovy
+
 def jenkinsfile
-def version='feature/AOS-1592'
+def version='v3.0.0'
 fileLoader.withGit('https://git.aurora.skead.no/scm/ao/aurora-pipeline-scripts.git', version) {
    jenkinsfile = fileLoader.load('templates/leveransepakke')
 }
@@ -7,9 +9,8 @@ fileLoader.withGit('https://git.aurora.skead.no/scm/ao/aurora-pipeline-scripts.g
 def overrides = [
     piTests: false,
     skipOpenShiftBuild: true,
-    deployProperties: "-P sign,build-extras",
     credentialsId: "github_bjartek",
-    mavenSettingsFile: "github-maven-settings"
+    deployTo: 'maven-central'
 ]
 
 jenkinsfile.run(version, overrides)

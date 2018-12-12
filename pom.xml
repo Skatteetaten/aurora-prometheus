@@ -45,6 +45,7 @@
     <sonar.jacoco.reportPath>${project.basedir}/target/jacoco.exec</sonar.jacoco.reportPath>
     <sonar.coverage.exclusions>**/*Main.java</sonar.coverage.exclusions>
     <sonar.tests>src/test/groovy</sonar.tests>
+    <simpleclient.version>0.6.0</simpleclient.version>
   </properties>
 
   <distributionManagement>
@@ -59,17 +60,22 @@
     <dependency>
       <groupId>io.prometheus</groupId>
       <artifactId>simpleclient</artifactId>
-      <version>0.0.21</version>
+      <version>${simpleclient.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>io.prometheus</groupId>
+      <artifactId>simpleclient_common</artifactId>
+      <version>${simpleclient.version}</version>
     </dependency>
     <dependency>
       <groupId>io.prometheus</groupId>
       <artifactId>simpleclient_hotspot</artifactId>
-      <version>0.0.21</version>
+      <version>${simpleclient.version}</version>
     </dependency>
     <dependency>
       <groupId>io.prometheus</groupId>
       <artifactId>simpleclient_logback</artifactId>
-      <version>0.0.21</version>
+      <version>${simpleclient.version}</version>
     </dependency>
     <dependency>
       <groupId>org.spockframework</groupId>

@@ -112,11 +112,6 @@
           <version>1.5</version>
         </plugin>
         <plugin>
-          <groupId>no.skatteetaten.aurora.maven.plugins</groupId>
-          <artifactId>aurora-cd</artifactId>
-          <version>3.0.0</version>
-        </plugin>
-        <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-assembly-plugin</artifactId>
           <version>3.0.0</version>

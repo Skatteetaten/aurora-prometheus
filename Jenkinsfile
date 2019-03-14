@@ -1,16 +1,21 @@
 def jenkinsfile
-def version='v5'
-fileLoader.withGit('https://git.aurora.skead.no/scm/ao/aurora-pipeline-scripts.git', version) {
-   jenkinsfile = fileLoader.load('templates/leveransepakke')
-}
 
 def overrides = [
-    piTests: false,
+    scriptVersion  : 'v6',
+    pipelineScript: 'https://git.aurora.skead.no/scm/ao/aurora-pipeline-scripts.git',
     credentialsId: "github",
+    checkstyle : false,
+    sonarQube: false,
     deployTo: 'maven-central',
-    suggestVersionAndTagReleases: [
-       [branch: 'master', versionHint: '2']
+    jiraFiksetIKomponentversjon: true,
+    chatRoom: "#aos-notifications",
+    versionStrategy: [
+      [ branch: 'master', versionHint: '2' ]
     ]
 ]
 
-jenkinsfile.run(version, overrides)
+fileLoader.withGit(overrides.pipelineScript, overrides.scriptVersion) {
+   jenkinsfile = fileLoader.load('templates/leveransepakke')
+}
+
+jenkinsfile.run(overrides.scriptVersion, overrides)

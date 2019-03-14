@@ -8,6 +8,7 @@ def overrides = [
     sonarQube: false,
     deployTo: 'maven-central',
     jiraFiksetIKomponentversjon: true,
+    chatRoom: "#aos-notifications",
     versionStrategy: [
       [ branch: 'master', versionHint: '2' ]
     ]

@@ -13,7 +13,7 @@ def overrides = [
     ]
 ]
 
-fileLoader.withGit(overrides.pipelineScript,, overrides.scriptVersion) {
+fileLoader.withGit(overrides.pipelineScript, overrides.scriptVersion) {
    jenkinsfile = fileLoader.load('templates/leveransepakke')
 }
 
